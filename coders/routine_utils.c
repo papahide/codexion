@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 09:58:06 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/23 21:19:32 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/08/25 21:33:50 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,29 +22,33 @@ long	get_time_ms(void)
 
 void	take_dongle(t_coder *coder, t_dongle *dongle)
 {
-	t_request	request;
-	long		last_compile_start;
-	long		burnout;
-	int			i;
+	t_request		request;
+	long			last_compile_start;
+	long			burnout;
 
 	last_compile_start = coder->last_compile_start;
 	burnout = coder->simulation->parameters.time_to_burnout;
 	pthread_mutex_lock(&dongle->mutex);
 	if (coder->simulation->parameters.scheduler == 0)
 		request = create_request(coder->id, get_time_ms());
-	else if (coder->simulation->parameters.scheduler == 1)
+	else
 		request = create_request(coder->id, last_compile_start + burnout);
-	pthread_cond_init(&request.cond, NULL);
 	heap_push(&dongle->queue, request);
-	while (dongle->queue.requests[0].coder_id != coder->id
+	while (!coder->simulation->stop && (dongle->queue.requests[0].coder_id != coder->id
 		|| dongle->available == 0
-		|| get_time_ms() < dongle->available_at)
-    	pthread_cond_wait(&request.cond, &dongle->mutex);
+		|| get_time_ms() < dongle->available_at))
+	{
+		pthread_mutex_unlock(&dongle->mutex);
+		usleep(500);
+		pthread_mutex_lock(&dongle->mutex);
+	}
+	if (coder->simulation->stop)
+	{
+		heap_pop(&dongle->queue);
+		pthread_mutex_unlock(&dongle->mutex);
+		return;
+	}
 	heap_pop(&dongle->queue);
-	pthread_cond_destroy(&request.cond);
-	i = -1;
-	while (dongle->queue.size > ++i)
-		pthread_cond_destroy(&dongle->queue.requests[i].cond);
 	dongle->available = 0;
 	pthread_mutex_unlock(&dongle->mutex);
 }
@@ -57,8 +61,6 @@ void	leave_dongle(t_coder *coder, t_dongle *dongle)
 	pthread_mutex_lock(&dongle->mutex);
 	dongle->available = 1;
 	dongle->available_at = get_time_ms() + cooldown;
-	if (dongle->queue.size > 0)
-		pthread_cond_signal(&dongle->queue.requests[0].cond);
 	pthread_mutex_unlock(&dongle->mutex);
 }
 

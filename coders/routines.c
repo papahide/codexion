@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 21:32:57 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/23 21:21:08 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/08/25 21:14:16 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,14 @@
 
 static void	take_both_dongles(t_coder *coder, t_dongle *left, t_dongle *right)
 {
-	if (coder->id == coder->simulation->parameters.number_of_coders)
+	if (coder->id % 2 == 0)
 	{
 		take_dongle(coder, right);
+		if (coder->simulation->stop)
+		{
+			leave_dongle(coder, right);
+			return;
+		}
 		print_log(coder->simulation, coder->id, "has taken a dongle");
 		take_dongle(coder, left);
 		print_log(coder->simulation, coder->id, "has taken a dongle");
@@ -24,6 +29,11 @@ static void	take_both_dongles(t_coder *coder, t_dongle *left, t_dongle *right)
 	else
 	{
 		take_dongle(coder, left);
+		if (coder->simulation->stop)
+		{
+			leave_dongle(coder, left);
+			return;
+		}
 		print_log(coder->simulation, coder->id, "has taken a dongle");
 		take_dongle(coder, right);
 		print_log(coder->simulation, coder->id, "has taken a dongle");
@@ -41,18 +51,39 @@ void	*coder_routine(void *arg)
 	coders = coder->simulation->parameters.number_of_coders;
 	while (!coder->simulation->stop)
 	{
-		take_both_dongles(coder, &coder->simulation->dongles[coder_id - 1],
-			&coder->simulation->dongles[coder_id % coders]);
+		if (coders == 1)
+		{
+			take_dongle(coder, &coder->simulation->dongles[0]);
+			print_log(coder->simulation, coder->id, "has taken a dongle");
+		}
+		else
+			take_both_dongles(coder, &coder->simulation->dongles[coder_id - 1],
+				&coder->simulation->dongles[coder_id % coders]);
+		if (coder->simulation->stop)
+			break;
 		coder->last_compile_start = get_time_ms();
 		print_log(coder->simulation, coder_id, "is compiling");
-		usleep(coder->simulation->parameters.time_to_compile);
+		if (coder->simulation->stop)
+			break;
+		usleep(coder->simulation->parameters.time_to_compile * 1000);
 		coder->compiles_done += 1;
-		leave_dongle(coder, &coder->simulation->dongles[coder_id - 1]);
-		leave_dongle(coder, &coder->simulation->dongles[coder_id % coders]);
+		if (coders == 1)
+			leave_dongle(coder, &coder->simulation->dongles[0]);
+		else
+		{
+			leave_dongle(coder, &coder->simulation->dongles[coder_id - 1]);
+			leave_dongle(coder, &coder->simulation->dongles[coder_id % coders]);
+		}
+		if (coder->simulation->stop)
+			break;
 		print_log(coder->simulation, coder_id, "is debugging");
-		usleep(coder->simulation->parameters.time_to_debug);
+		usleep(coder->simulation->parameters.time_to_debug * 1000);
+		if (coder->simulation->stop)
+			break;
 		print_log(coder->simulation, coder_id, "is refactoring");
-		usleep(coder->simulation->parameters.time_to_refactor);
+		usleep(coder->simulation->parameters.time_to_refactor * 1000);
+		if (coder->simulation->stop)
+			break;
 	}
 	return NULL;
 }

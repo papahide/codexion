@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 22:43:51 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/23 21:20:47 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/08/25 21:39:42 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ typedef struct s_request
 {
 	int				coder_id;
 	long			priority;
-	pthread_cond_t	cond;
 } t_request;
 
 typedef struct s_heap
