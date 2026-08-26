@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 17:50:25 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/23 21:19:09 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/08/26 19:33:21 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ t_heap	*init_heap(t_heap *heap, int max_size)
 {
 	heap->requests = malloc(sizeof(t_request) * max_size);
 	if (!heap->requests)
-		return NULL;
+		return (NULL);
 	heap->size = 0;
 	return (heap);
 }

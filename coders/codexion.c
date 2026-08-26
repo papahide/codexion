@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 22:43:55 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/20 21:40:38 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/08/26 19:33:54 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 
 void	codexion(t_parameters *params)
 {
-	t_simulation *sim;
+	t_simulation	*sim;
 
 	sim = init_simulation(params);
 	start_simulation(sim);
 }
 
-int main(int argc, char *argv[])
+int	main(int argc, char *argv[])
 {
 	char			**args;
 	t_parameters	*valid;

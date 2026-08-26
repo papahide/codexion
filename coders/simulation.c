@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 16:07:44 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/24 21:46:28 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/08/26 19:35:17 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 t_simulation	*init_simulation(t_parameters *params)
 {
-	t_simulation *simulation;
+	t_simulation	*simulation;
 
 	simulation = malloc(sizeof(t_simulation));
 	if (!simulation)
-		return NULL;
+		return (NULL);
 	simulation->parameters = *params;
 	simulation->dongles = malloc(sizeof(t_dongle) * params->number_of_coders);
 	if (!simulation->dongles)
@@ -57,11 +57,12 @@ static void	free_simulation(t_simulation *sim)
 
 void	start_simulation(t_simulation *sim)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (sim->parameters.number_of_coders > ++i)
-		pthread_create(&sim->coders[i].thread, NULL, coder_routine, &sim->coders[i]);
+		pthread_create(&sim->coders[i].thread, NULL,
+			coder_routine, &sim->coders[i]);
 	pthread_create(&sim->monitor, NULL, monitor_routine, sim);
 	i = -1;
 	while (sim->parameters.number_of_coders > ++i)

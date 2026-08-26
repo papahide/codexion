@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 19:51:04 by paapahid          #+#    #+#             */
-/*   Updated: 2026/06/17 21:33:58 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/08/26 19:40:25 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ bool	ft_strcmp(const char *str, const char *cmp)
 	int		i;
 
 	i = 0;
-	while(str[i])
+	while (str[i])
 	{
 		if (str[i] != cmp[i])
 			return (0);
@@ -35,12 +35,12 @@ bool	validator(char **str)
 	int	j;
 
 	i = -1;
-	while(++i < 7)
+	while (++i < 7)
 	{
 		j = -1;
 		while (str[i][++j])
 		{
-			if(!(str[i][j] >= '0' && str[i][j] <= '9'))
+			if (!(str[i][j] >= '0' && str[i][j] <= '9'))
 				return (0);
 		}
 	}

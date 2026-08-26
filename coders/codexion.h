@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 22:43:51 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/25 21:39:42 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/08/26 20:54:02 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,22 @@ typedef struct s_parameters
 	int		comp_required;
 	long	dongle_cooldown;
 	int		scheduler;
-} t_parameters;
+}	t_parameters;
 
-typedef struct s_simulation t_simulation;
-typedef struct s_coder t_coder;
+typedef struct s_simulation	t_simulation;
+typedef struct s_coder		t_coder;
 
 typedef struct s_request
 {
 	int				coder_id;
 	long			priority;
-} t_request;
+}	t_request;
 
 typedef struct s_heap
 {
 	t_request	*requests;
 	int			size;
-} t_heap;
+}	t_heap;
 
 typedef struct s_dongle
 {
@@ -54,7 +54,7 @@ typedef struct s_dongle
 	pthread_cond_t	cond;
 	long			available_at;
 	t_heap			queue;
-} t_dongle;
+}	t_dongle;
 
 typedef struct s_coder
 {
@@ -63,7 +63,7 @@ typedef struct s_coder
 	int				compiles_done;
 	long			last_compile_start;
 	t_simulation	*simulation;
-} t_coder;
+}	t_coder;
 
 typedef struct s_simulation
 {
@@ -75,7 +75,7 @@ typedef struct s_simulation
 	long			start_time;
 	pthread_t		monitor;
 	pthread_mutex_t	stop_mutex;
-} t_simulation;
+}	t_simulation;
 
 // Parsing
 bool			ft_strcmp(const char *str, const char *cmp);
@@ -83,8 +83,8 @@ bool			validator(char **str);
 void			parse(t_parameters *valid, char **args);
 
 // Initialization
-void 			init_coders(int coders_n, t_simulation *simulation);
-void 			init_dongles(int dongle_n, t_simulation *simulation);
+void			init_coders(int coders_n, t_simulation *simulation);
+void			init_dongles(int dongle_n, t_simulation *simulation);
 
 // Simulation
 t_simulation	*init_simulation(t_parameters *params);
@@ -95,8 +95,14 @@ void			stop_simulation(t_simulation *sim, int coder_id, int reason);
 void			*coder_routine(void *arg);
 void			*monitor_routine(void *arg);
 
+// Coder routine utils
+int				coder_cycle(t_coder *coder, int coders,
+					int coder_id, t_parameters param);
+
 // Routine utils
 void			take_dongle(t_coder *coder, t_dongle *dongle);
+void			take_both_dongles(t_coder *coder,
+					t_dongle *left, t_dongle *right);
 void			leave_dongle(t_coder *coder, t_dongle *dongle);
 int				check_compiles_done(t_simulation *sim);
 int				set_sim_stop(t_simulation *sim);
@@ -113,4 +119,4 @@ t_request		heap_pop(t_heap *heap);
 // Requests
 t_request		create_request(int coder_id, long priority);
 
-# endif
+#endif

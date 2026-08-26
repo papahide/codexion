@@ -6,7 +6,7 @@
 #    By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/17 21:27:53 by paapahid          #+#    #+#              #
-#    Updated: 2026/08/23 20:36:03 by paapahid         ###   ########.fr        #
+#    Updated: 2026/08/26 20:53:20 by paapahid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,9 @@ SRC = codexion.c \
 	request_creation.c \
 	routine_utils.c \
 	routines.c \
-	simulation.c
+	simulation.c \
+	take_dongle.c \
+	coder_routine_utils.c
 
 OBJ = $(SRC:.c=.o)
 
