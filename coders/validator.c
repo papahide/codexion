@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 19:51:04 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/26 19:40:25 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/10/14 14:48:43 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ bool	validator(char **str)
 	while (++i < 7)
 	{
 		j = -1;
+		if (str[i][0] == '\0')
+			return (0);
 		while (str[i][++j])
 		{
 			if (!(str[i][j] >= '0' && str[i][j] <= '9'))
@@ -45,6 +47,8 @@ bool	validator(char **str)
 		}
 	}
 	if (i == 7 && (!ft_strcmp(str[i], "edf") && !ft_strcmp(str[i], "fifo")))
+		return (0);
+	if (atoi(str[0]) < 1)
 		return (0);
 	return (1);
 }

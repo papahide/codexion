@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/09 22:43:51 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/26 20:54:02 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/10/14 20:35:31 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ typedef struct s_dongle
 {
 	int				available;
 	pthread_mutex_t	mutex;
-	pthread_cond_t	cond;
 	long			available_at;
 	t_heap			queue;
 }	t_dongle;
@@ -63,6 +62,7 @@ typedef struct s_coder
 	int				compiles_done;
 	long			last_compile_start;
 	t_simulation	*simulation;
+	pthread_mutex_t	mutex;
 }	t_coder;
 
 typedef struct s_simulation
@@ -96,6 +96,8 @@ void			*coder_routine(void *arg);
 void			*monitor_routine(void *arg);
 
 // Coder routine utils
+void			coder_acquire_dongles(t_coder *coder, int coders, int coder_id);
+void			coder_release_dongles(t_coder *coder, int coders, int coder_id);
 int				coder_cycle(t_coder *coder, int coders,
 					int coder_id, t_parameters param);
 
@@ -107,6 +109,8 @@ void			leave_dongle(t_coder *coder, t_dongle *dongle);
 int				check_compiles_done(t_simulation *sim);
 int				set_sim_stop(t_simulation *sim);
 long			get_time_ms(void);
+long			get_compile_start(t_coder *coder);
+int				get_compiles_done(t_coder *coder);
 
 // Logs
 void			print_log(t_simulation *simulation, int coder_id, char *action);

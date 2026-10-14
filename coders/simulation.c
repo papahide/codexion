@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 16:07:44 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/26 19:35:17 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/10/14 15:15:43 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ static void	free_simulation(t_simulation *sim)
 	while (coder_nr > ++i)
 	{
 		pthread_mutex_destroy(&sim->dongles[i].mutex);
-		pthread_cond_destroy(&sim->dongles[i].cond);
 		free(sim->dongles[i].queue.requests);
+		pthread_mutex_destroy(&sim->coders[i].mutex);
 	}
 	free(sim->dongles);
 	free(sim->coders);

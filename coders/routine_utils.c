@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/23 09:58:06 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/26 20:39:28 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/10/14 20:33:11 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	check_compiles_done(t_simulation *sim)
 	compiles_done = 1;
 	while (sim->parameters.number_of_coders > ++i)
 	{
-		if (sim->coders[i].compiles_done < sim->parameters.comp_required)
+		if (get_compiles_done(&sim->coders[i]) < sim->parameters.comp_required)
 		{
 			compiles_done = 0;
 			break ;

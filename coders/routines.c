@@ -6,7 +6,7 @@
 /*   By: paapahid <paapahid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 21:32:57 by paapahid          #+#    #+#             */
-/*   Updated: 2026/08/26 20:48:23 by paapahid         ###   ########.fr       */
+/*   Updated: 2026/10/14 21:00:16 by paapahid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	take_both_dongles(t_coder *coder, t_dongle *left, t_dongle *right)
 	if (coder->id % 2 == 0)
 	{
 		take_dongle(coder, right);
-		if (coder->simulation->stop)
+		if (set_sim_stop(coder->simulation))
 		{
 			leave_dongle(coder, right);
 			return ;
@@ -29,7 +29,7 @@ void	take_both_dongles(t_coder *coder, t_dongle *left, t_dongle *right)
 	else
 	{
 		take_dongle(coder, left);
-		if (coder->simulation->stop)
+		if (set_sim_stop(coder->simulation))
 		{
 			leave_dongle(coder, left);
 			return ;
@@ -49,7 +49,7 @@ void	*coder_routine(void *arg)
 	coder = (t_coder *)arg;
 	coders = coder->simulation->parameters.number_of_coders;
 	param = coder->simulation->parameters;
-	while (!coder->simulation->stop)
+	while (!set_sim_stop(coder->simulation))
 	{
 		if (coder_cycle(coder, coders, coder->id, param))
 			break ;
@@ -57,26 +57,36 @@ void	*coder_routine(void *arg)
 	return (NULL);
 }
 
+int	check_burnout(t_simulation *sim)
+{
+	long	coder_deadline;
+	int		i;
+
+	i = -1;
+	while (sim->parameters.number_of_coders > ++i)
+	{
+		coder_deadline = get_compile_start(&sim->coders[i])
+			+ sim->parameters.time_to_burnout;
+		if (get_time_ms() > coder_deadline)
+		{
+			stop_simulation(sim, sim->coders[i].id, 1);
+			return (1);
+		}
+	}
+	return (0);
+}
+
 void	*monitor_routine(void *arg)
 {
 	t_simulation	*sim;
-	int				i;
-	long			coder_deadline;
 	int				stop;
 
-	i = -1;
 	sim = (t_simulation *)arg;
 	stop = 0;
 	while (stop == 0)
 	{
-		i = -1;
-		while (sim->parameters.number_of_coders > ++i)
-		{
-			coder_deadline = sim->coders[i].last_compile_start
-				+ sim->parameters.time_to_burnout;
-			if (get_time_ms() > coder_deadline)
-				stop_simulation(sim, sim->coders[i].id, 1);
-		}
+		if (check_burnout(sim))
+			break ;
 		if (check_compiles_done(sim) == 1)
 			stop_simulation(sim, 0, 0);
 		usleep(1000);
